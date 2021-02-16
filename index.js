@@ -1,32 +1,9 @@
 const express = require("express");
-const passport = require("passport");
-const GoogleStratagy = require("passport-google-oauth20").Strategy;
-const keys = require("./config/key");
+require("./services/passport");
 
 const app = express();
 
-// third arg is the redirect URL after user grants permission
-passport.use(
-  new GoogleStratagy(
-    {
-      clientID: keys.googleClientID,
-      clientSecret: keys.googleClientSecret,
-      callbackURL: "/auth/google/callback",
-    },
-    (accessToken, refreshToken, profile, done) => {
-      console.log("access token", accessToken);
-      console.log("refresh token", refreshToken);
-      console.log("profile: ", profile);
-    }
-  )
-);
-
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-app.get("/auth/google/callback", passport.authenticate("google"));
+require("./routes/authRoutes")(app);
 
 // default (development environment) is 5000
 const PORT = process.env.PORT || 5000;
