@@ -1,6 +1,6 @@
 const passport = require("passport");
 const GoogleStratagy = require("passport-google-oauth20").Strategy;
-const keys = require("../config/key");
+const keys = require("../config/keys");
 
 // third arg is the redirect URL after user grants permission
 passport.use(
