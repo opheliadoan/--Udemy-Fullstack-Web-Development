@@ -1,6 +1,10 @@
 const passport = require("passport");
 const GoogleStratagy = require("passport-google-oauth20").Strategy;
+const mongoose = require("mongoose");
 const keys = require("../config/keys");
+
+// Model Class
+const User = mongoose.model("users");
 
 // third arg is the redirect URL after user grants permission
 passport.use(
@@ -11,9 +15,15 @@ passport.use(
       callbackURL: "/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
-      console.log("access token", accessToken);
-      console.log("refresh token", refreshToken);
-      console.log("profile: ", profile);
+      User.findOne({ googleId: profile.id }).then((existingUser) => {
+        if (existingUser) {
+          done(null, existingUser);
+        } else {
+          new User({ googleId: profile.id }).save().then((user) => {
+            done(null, user);
+          });
+        }
+      });
     }
   )
 );
